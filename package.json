@@ -1,0 +1,22 @@
+{
+  "name": "projeto-tweteroo-back-end",
+  "version": "1.0.0",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node .",
+    "dev": "nodemon ."
+  },
+  "keywords": [],
+  "author": "Gabriel Paranhos",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "joi": "^17.13.3",
+    "mongodb": "^6.8.0",
+    "nodemon": "^3.1.4"
+  }
+}
