@@ -98,6 +98,18 @@ server.put('/tweets/:id', async (req, res) => {
   }
 })
 
+server.delete('/tweets/:id', async (req, res) => {
+  const {id} = req.params;
+
+  try{
+    const tweetDeleted = await db.collection("tweets").deleteOne({ _id: new ObjectId(id) });
+    if (tweetDeleted.deletedCount === 0) return res.status(404).send('Erro ao excluir tweet.');
+    res.sendStatus(204);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+})
+
 const port = process.env.PORT || 5000;
 server.listen(port, () => {
   console.log(`Server Running in port ${port}`);
