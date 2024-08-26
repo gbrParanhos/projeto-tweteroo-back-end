@@ -5,7 +5,7 @@ import 'dotenv/config';
 
 const server = express();
 const mongoClient = new MongoClient(process.env.DATABASE_URL);
-let db = mongoClient.db();
+let db;
 
 server.use(json());
 mongoClient.connect()
