@@ -2,11 +2,12 @@ import express, { json } from "express";
 import { MongoClient, ObjectId } from "mongodb";
 import joi from "joi";
 import 'dotenv/config';
+import cors from 'cors';
 
 const server = express();
 const mongoClient = new MongoClient(process.env.DATABASE_URL);
 let db;
-
+server.use(cors())
 server.use(json());
 mongoClient.connect()
 .then(() => db = mongoClient.db())
