@@ -5,7 +5,7 @@ import 'dotenv/config';
 
 const server = express();
 const mongoClient = new MongoClient(process.env.DATABASE_URL);
-let db;
+let db = mongoClient.db();
 
 server.use(json());
 mongoClient.connect()
@@ -51,12 +51,27 @@ server.post('/tweets', async (req, res) => {
   
   try{
     const userExist = await db.collection('users').findOne({ username: tweet.username });
-    if (!userExist) return res.status(401).send('Usuário Inválido.')
+    if (!userExist) return res.status(401).send('Usuário Inválido.');
     const tweetCreated = await db.collection('tweets').insertOne(tweet);
     const newTweet = await db.collection('tweets').findOne({ _id: tweetCreated.insertedId });
     res.status(201).send(newTweet);
   } catch (error) {
     res.status(500).send(error.message);
+  }
+})
+
+server.get('/tweets', async (req, res) => {
+  try {
+    const tweets = await db.collection("tweets").find().sort({ _id: -1 }).toArray();
+    
+    const tweetsWithAvatar = await Promise.all(tweets.map(async tweet => {
+      const {avatar} = await db.collection('users').findOne({ username: tweet.username });
+      const tweetWithAvatar = {_id:tweet._id, username: tweet.username, avatar, tweet:tweet.tweet};
+      return tweetWithAvatar;
+    }))
+    res.status(200).send(tweetsWithAvatar)
+  } catch (error) {
+    res.status(500).send(error.message)
   }
 })
 
