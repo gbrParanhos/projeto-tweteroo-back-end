@@ -75,6 +75,29 @@ server.get('/tweets', async (req, res) => {
   }
 })
 
+server.put('/tweets/:id', async (req, res) => {
+  const {id} = req.params;
+  const tweet = req.body;
+  const validation = tweetSchema.validate(tweet, { abortEarly: false });
+  
+  if (validation.error) {
+    const errors = validation.error.details.map((detail) => detail.message);
+    return res.status(422).send(errors);
+  }
+
+  try{
+    const tweetExist = await db.collection('tweets').findOne({ _id: new ObjectId(id) });
+
+    if (!tweetExist) return res.status(404).send('Erro ao atualizar tweet.');
+    if (tweetExist.username !== tweet.username) return res.status(401).send('Usuário Inválido.');
+
+    await db.collection("tweets").updateOne({ _id: new ObjectId(id) },{ $set: tweet });
+    res.sendStatus(204);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+})
+
 const port = process.env.PORT || 5000;
 server.listen(port, () => {
   console.log(`Server Running in port ${port}`);
